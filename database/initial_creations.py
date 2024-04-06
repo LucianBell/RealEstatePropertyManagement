@@ -31,7 +31,7 @@ def drop_database(connec):
 
 
 def create_tables(sql_file, connec):
-    cursor =  connec.cursor();
+    cursor = connec.cursor();
     cursor.execute("USE {}".format(db_config["DB_NAME"]))
 
     try:
@@ -40,6 +40,8 @@ def create_tables(sql_file, connec):
 
         cursor.execute(sql_statements)
         print("⚒️ -> Table Creation successful!")
+    except FileNotFoundError:
+        print(f"File {sql_file} not found")
     except connector.Error as err:
         print("Failed to create table: {}".format(err))
         exit(1)
