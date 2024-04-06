@@ -12,7 +12,7 @@ def create_database(connec):
         cursor.execute(
             "CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(db_config["DB_NAME"])
         )
-        print("⚒️ -> Table Creation successful!")
+        print("⚒️ -> Database Creation successful!")
     except connector.Error as err:
         print("Failed to create database: {}".format(err))
         exit(1)
@@ -22,7 +22,7 @@ def drop_database(connec):
 
     try:
         cursor.execute(
-            "DROP DATABASE RealState"
+            "DROP DATABASE {}".format(db_config["DB_NAME"])
         )
         print("💣 -> Table Drop successful!")
     except connector.Error as err:
@@ -30,11 +30,20 @@ def drop_database(connec):
         exit(1)
 
 
-def create_tables(sql_file, connection):
-    cursor =  connection.cursor();
+def create_tables(sql_file, connec):
+    cursor =  connec.cursor();
+    cursor.execute("USE {}".format(db_config["DB_NAME"]))
 
-    #try:
-    #    cursor.execute(sql_file)
+    try:
+        with open(sql_file, 'r') as file:
+            sql_statements = file.read()
+
+        cursor.execute(sql_statements)
+        print("⚒️ -> Table Creation successful!")
+    except connector.Error as err:
+        print("Failed to create table: {}".format(err))
+        exit(1)
 
 if __name__ == "__main__":
-    drop_database(connec=connect_to_sql())
+    # create_database(connec=connect_to_sql())
+    create_tables(sql_file='database\sql\schema.sql', connec=connect_to_sql())
