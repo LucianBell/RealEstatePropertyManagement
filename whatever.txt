@@ -1,3 +1,0 @@
-    CONSTRAINT fk_curtenant FOREIGN KEY (CurrentTenant) REFERENCES Tenants(TenantID)
-    CONSTRAINT fk_rentahist FOREIGN KEY (RentaHistory) REFERENCES RentalHistory(RentalID)
-    CONSTRAINT fk_tenant FOREIGN KEY (TenantID) REFERENCES Tenants(TenantID)

@@ -8,6 +8,7 @@ import pandas as pd
 # Getting env variables for database connection
 db_config = dotenv_values(".env")
 
+# Function to create tables in db -> TESTED
 def create_tables(sql_file, connec):
     cursor = connec.cursor();
     cursor.execute("USE {}".format(db_config["DB_NAME"]))
@@ -31,8 +32,9 @@ def create_tables(sql_file, connec):
         print("Failed to create table: {}".format(err))
         exit(1)
 
+# Function to drop tables in db -> TESTED
 def drop_tables(table_name, connec):
-    cursor =  connec.cursor();
+    cursor = connec.cursor();
     cursor.execute("USE {}".format(db_config["DB_NAME"]))
 
     try:
@@ -44,6 +46,46 @@ def drop_tables(table_name, connec):
         print("Failed to drop table: {}".format(err))
         exit(1)
 
+# Function to add constraints to tables in db -> TESTED
+def add_constraint(sql_file, connec):
+    cursor = connec.cursor();
+    cursor.execute("USE {}".format(db_config["DB_NAME"]))
+
+    try:
+        with open(sql_file, 'r') as file:
+            sql_statements = file.read()
+
+        # Split SQL statements by semicolon
+        statements = sql_statements.split(';')
+        
+        number = 0
+        for statement in statements:
+            cursor.execute(statement)
+            number += 1
+            print(f"🔨 -> Constraint #{number} Added successfully!")
+
+    except FileNotFoundError:
+        print(f"File {sql_file} not found")
+        exit(1)
+    except connector.IntegrityError as err:
+        print("🛑 -- INTEGRITY ERROR -- 🛑")
+        print("Check your SQL Command! It may have duplicated keys or invalid data!")
+        print("Error code {}\n".format(err.errno))
+        print("SQLSTATE Value {}\n".format(err.sqlstate))
+        exit(1)
+    except connector.Error as err:
+        print("🛑 -- ERROR -- 🛑")
+        print("Error code {}\n".format(err.errno))
+        print("SQLSTATE Value {}\n".format(err.sqlstate))
+        
+        if err.errno == errorcode.ER_SYNTAX_ERROR:
+            print("SQL Command has a syntax error!")
+            print("Check your syntax")
+        else:
+            print("Failed to insert data: {}\n".format(err.msg))
+        exit(1)
+
+# Function to manipulate (WRITE, DELETE AND/OR UPDATE) data from tables in db -> TO TEST
 def table_manipulation(sql_file, connec, intention):
     available_options = ['w', 'd', 'u']
     cursor = connec.cursor();
@@ -128,4 +170,6 @@ if __name__ == "__main__":
     # drop_tables(table_name='properties', connec=connect_to_sql())
     # print("\n")
     # drop_tables(table_name='tenants', connec=connect_to_sql())
-    create_tables(sql_file=r'C:\Users\Lucian\Desktop\Code\Pessoal\SQL\DataModelling-CDB\database\sql\schema.sql', connec=connect_to_sql())
+    # create_tables(sql_file=r'C:\Users\Lucian\Desktop\Code\Pessoal\SQL\DataModelling-CDB\database\sql\schema.sql', connec=connect_to_sql())
+    add_constraint(sql_file=r'C:\Users\Lucian\Desktop\Code\Pessoal\SQL\DataModelling-CDB\database\sql\constraints.sql', connec=connect_to_sql())
+    
