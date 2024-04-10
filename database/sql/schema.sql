@@ -14,8 +14,7 @@ CREATE TABLE Properties (
     RentalPrice INT,
     NumberOfUnits INT,
     CurrentTenant INT, 
-    PRIMARY KEY (PropertyID),
-    CONSTRAINT fk_curtenant FOREIGN KEY (CurrentTenant) REFERENCES Tenants(TenantID)
+    PRIMARY KEY (PropertyID)
 );
 
 /*Tenants Table*/
@@ -28,9 +27,8 @@ CREATE TABLE Tenants (
     MoveInDate DATE NOT NULL,
     RentaHistory INT,
     CreditScore INT,
-    PRIMARY KEY (TenantID),
-    CONSTRAINT fk_rentahist FOREIGN KEY (RentaHistory) REFERENCES RentalHistory(RentalID)
-)
+    PRIMARY KEY (TenantID)
+);
 
 CREATE TABLE RentalHistory (
     RentalID INT NOT NULL,
@@ -39,8 +37,6 @@ CREATE TABLE RentalHistory (
     PreviousMoveInDate DATE,
     PreviousMoveOutDate DATE,
     ReasonForLeaving VARCHAR(255),
-    FeedbackGrade INT CHECK (FeedbackGrade >= 0 AND FeedbackGrade <= 5)
-    PRIMARY KEY (RentalID),
-    CONSTRAINT fk_tenant FOREIGN KEY (TenantID) REFERENCES Tenants(TenantID)
+    FeedbackGrade INT CHECK (FeedbackGrade >= 0 AND FeedbackGrade <= 5),
+    PRIMARY KEY (RentalID)
 )
-

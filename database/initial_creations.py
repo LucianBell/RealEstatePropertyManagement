@@ -30,22 +30,5 @@ def drop_database(connec):
         exit(1)
 
 
-def create_tables(sql_file, connec):
-    cursor = connec.cursor();
-    cursor.execute("USE {}".format(db_config["DB_NAME"]))
-
-    try:
-        with open(sql_file, 'r') as file:
-            sql_statements = file.read()
-
-        cursor.execute(sql_statements)
-        print("⚒️ -> Table Creation successful!")
-    except FileNotFoundError:
-        print(f"File {sql_file} not found")
-    except connector.Error as err:
-        print("Failed to create table: {}".format(err))
-        exit(1)
-
 if __name__ == "__main__":
-    # create_database(connec=connect_to_sql())
-    create_tables(sql_file='database\sql\schema.sql', connec=connect_to_sql())
+    create_database(connec=connect_to_sql())
